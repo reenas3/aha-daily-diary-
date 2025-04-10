@@ -28,6 +28,7 @@ interface FormData {
   contractId: string;
   siteLocation: string;
   date: string;
+  title: string;
   weather: {
     temperature: string;
     sky: string;
@@ -38,6 +39,20 @@ interface FormData {
     startTime: string;
     endTime: string;
   };
+  progress: string;
+  safety: string;
+  materials: string;
+  equipment: string;
+  labor: string;
+  issues: string;
+  nextSteps: string;
+  tasks: Array<{
+    description: string;
+    equipment: string[];
+    quantity: number;
+    unit: string;
+  }>;
+  notes: string;
   images: File[];
   signature: string;
 }
@@ -53,6 +68,7 @@ export const SiteDiaryForm = () => {
     contractId: '',
     siteLocation: '',
     date: '',
+    title: '',
     weather: {
       temperature: '',
       sky: '',
@@ -63,6 +79,15 @@ export const SiteDiaryForm = () => {
       startTime: '',
       endTime: ''
     },
+    progress: '',
+    safety: '',
+    materials: '',
+    equipment: '',
+    labor: '',
+    issues: '',
+    nextSteps: '',
+    tasks: [],
+    notes: '',
     images: [],
     signature: ''
   })
@@ -126,6 +151,7 @@ export const SiteDiaryForm = () => {
       contractId: '',
       siteLocation: '',
       date: '',
+      title: '',
       weather: {
         temperature: '',
         sky: '',
@@ -136,6 +162,15 @@ export const SiteDiaryForm = () => {
         startTime: '',
         endTime: ''
       },
+      progress: '',
+      safety: '',
+      materials: '',
+      equipment: '',
+      labor: '',
+      issues: '',
+      nextSteps: '',
+      tasks: [],
+      notes: '',
       images: [],
       signature: ''
     })

@@ -1,5 +1,5 @@
 export interface DiaryEntry {
-  id?: string
+  id: string
   projectTitle: string
   contractId: string
   siteLocation: string
@@ -21,9 +21,23 @@ export interface DiaryEntry {
   labor: string
   issues: string
   nextSteps: string
-  imageUrls?: string[]
-  signature?: string
-  status?: 'draft' | 'submitted'
-  createdAt?: string
-  updatedAt?: string
+  tasks: Array<{
+    description: string
+    equipment: string[]
+    quantity: number
+    unit: string
+  }>
+  notes: string
+  title: string
+  imageUrls: string[]
+  signature: string
+  status: 'draft' | 'submitted'
+  createdAt: {
+    seconds: number
+    nanoseconds: number
+  }
+  updatedAt?: {
+    seconds: number
+    nanoseconds: number
+  }
 } 
