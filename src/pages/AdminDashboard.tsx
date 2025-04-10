@@ -487,30 +487,38 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Daily Diary Entries</h1>
-          <div className="flex space-x-4">
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="bg-white rounded-lg shadow-lg p-3 sm:p-6">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Daily Diary Entries</h1>
+          
+          {/* Controls Section */}
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <button
               onClick={exportToExcel}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm sm:text-base flex items-center justify-center"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
               Export All to Excel
             </button>
-            <div className="flex items-center space-x-2">
+            
+            {/* Date Range Picker */}
+            <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
               <input
                 type="date"
                 value={format(dateRange.startDate, 'yyyy-MM-dd')}
                 onChange={(e) => setDateRange(prev => ({ ...prev, startDate: new Date(e.target.value) }))}
-                className="border rounded px-2 py-1"
+                className="w-full sm:w-auto border rounded px-2 py-1 text-sm"
               />
-              <span>to</span>
+              <span className="hidden sm:block">to</span>
               <input
                 type="date"
                 value={format(dateRange.endDate, 'yyyy-MM-dd')}
                 onChange={(e) => setDateRange(prev => ({ ...prev, endDate: new Date(e.target.value) }))}
-                className="border rounded px-2 py-1"
+                className="w-full sm:w-auto border rounded px-2 py-1 text-sm"
               />
             </div>
           </div>
@@ -521,142 +529,191 @@ const AdminDashboard = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Title</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {entries.map((entry) => (
-                  <tr key={entry.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {format(new Date(entry.createdAt.seconds * 1000), 'MMM dd, yyyy')}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{entry.projectTitle}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{entry.siteLocation}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        entry.status === 'submitted' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {entry.status || 'draft'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        <PDFDownloadLink
-                          document={<PDFDocument entry={entry} />}
-                          fileName={`site-diary-${format(new Date(entry.date), 'yyyy-MM-dd')}.pdf`}
-                          className="text-blue-600 hover:text-blue-900 cursor-pointer"
-                        >
-                          {({ loading }) => (loading ? 'Loading...' : 'Export PDF')}
-                        </PDFDownloadLink>
-                        <button
-                          onClick={() => setSelectedEntry(entry)}
-                          className="text-green-600 hover:text-green-900"
-                        >
-                          View
-                        </button>
-                        <button
-                          onClick={() => handleDelete(entry.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="overflow-x-auto -mx-3 sm:-mx-6">
+            <div className="inline-block min-w-full align-middle">
+              <div className="overflow-hidden border border-gray-200 sm:rounded-lg">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project Title</th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {entries.map((entry) => (
+                      <tr key={entry.id} className="hover:bg-gray-50">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
+                          {format(new Date(entry.createdAt.seconds * 1000), 'MMM dd, yyyy')}
+                        </td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
+                          {entry.projectTitle}
+                        </td>
+                        <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {entry.siteLocation}
+                        </td>
+                        <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            entry.status === 'submitted' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {entry.status || 'draft'}
+                          </span>
+                        </td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                            <PDFDownloadLink
+                              document={<PDFDocument entry={entry} />}
+                              fileName={`site-diary-${format(new Date(entry.date), 'yyyy-MM-dd')}.pdf`}
+                              className="text-blue-600 hover:text-blue-900 cursor-pointer text-center"
+                            >
+                              {({ loading }) => (loading ? 'Loading...' : 'PDF')}
+                            </PDFDownloadLink>
+                            <button
+                              onClick={() => setSelectedEntry(entry)}
+                              className="text-green-600 hover:text-green-900"
+                            >
+                              View
+                            </button>
+                            <button
+                              onClick={() => handleDelete(entry.id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 
+        {/* Modal */}
         {selectedEntry && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Entry Details</h2>
-                <button
-                  onClick={() => setSelectedEntry(null)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold">Project Title</h3>
-                  <p>{selectedEntry.projectTitle}</p>
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div className="relative top-5 mx-auto p-4 sm:p-8 w-full max-w-2xl">
+              <div className="bg-white rounded-lg shadow-xl">
+                {/* Modal Header */}
+                <div className="flex justify-between items-center p-4 border-b">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800">Entry Details</h2>
+                  <button
+                    onClick={() => setSelectedEntry(null)}
+                    className="text-gray-500 hover:text-gray-700 text-xl font-bold"
+                  >
+                    ✕
+                  </button>
                 </div>
-                <div>
-                  <h3 className="font-semibold">Date</h3>
-                  <p>{format(new Date(selectedEntry.createdAt.seconds * 1000), 'MMMM dd, yyyy')}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold">Location</h3>
-                  <p>{selectedEntry.siteLocation}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold">Weather</h3>
-                  <p>{selectedEntry.weather.temperature}°C - {selectedEntry.weather.conditions}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold">Progress Summary</h3>
-                  <p>{selectedEntry.progress}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold">Labor</h3>
-                  <p>{selectedEntry.labor || '-'}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold">Equipment</h3>
-                  <p>
-                    {Array.isArray(selectedEntry.equipment)
-                      ? selectedEntry.equipment.map((equip, i) => (
-                          typeof equip === 'string'
-                            ? equip
-                            : `${equip.description}${equip.hours ? ` (${equip.hours} hrs)` : ''}`
-                        )).join(', ')
-                      : selectedEntry.equipment || '-'}
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold">Materials</h3>
-                  <p>
-                    {Array.isArray(selectedEntry.materials)
-                      ? selectedEntry.materials.map((material, i) => (
-                          typeof material === 'string'
-                            ? material
-                            : `${material.description}${material.quantity ? ` (${material.quantity} ${material.unit || 'units'})` : ''}`
-                        )).join(', ')
-                      : selectedEntry.materials || '-'}
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold">Notes</h3>
-                  <p>{selectedEntry.notes || '-'}</p>
-                </div>
-                {selectedEntry.imageUrls && selectedEntry.imageUrls.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold">Site Photos</h3>
-                    <div className="grid grid-cols-2 gap-4 mt-2">
-                      {selectedEntry.imageUrls.map((url, index) => (
-                        <img
-                          key={index}
-                          src={url}
-                          alt={`Site photo ${index + 1}`}
-                          className="rounded-lg w-full h-48 object-cover"
-                        />
-                      ))}
+
+                {/* Modal Content */}
+                <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <h3 className="font-semibold text-gray-700">Project Title</h3>
+                      <p className="text-sm text-gray-600">{selectedEntry.projectTitle || '-'}</p>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-700">Date</h3>
+                      <p className="text-sm text-gray-600">
+                        {format(new Date(selectedEntry.createdAt.seconds * 1000), 'MMMM dd, yyyy')}
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-700">Location</h3>
+                      <p className="text-sm text-gray-600">{selectedEntry.siteLocation || '-'}</p>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-700">Weather</h3>
+                      <p className="text-sm text-gray-600">
+                        {selectedEntry.weather?.temperature ? `${selectedEntry.weather.temperature}°C` : '-'} - 
+                        {selectedEntry.weather?.conditions || '-'}
+                      </p>
                     </div>
                   </div>
-                )}
+
+                  <div>
+                    <h3 className="font-semibold text-gray-700 mb-2">Progress Summary</h3>
+                    <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
+                      {selectedEntry.progress || 'No progress recorded'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-700 mb-2">Tasks</h3>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Description</th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Quantity</th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Unit</th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Hours</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {selectedEntry.tasks?.map((task, index) => (
+                            <tr key={index}>
+                              <td className="px-3 py-2">{task.description || '-'}</td>
+                              <td className="px-3 py-2">{task.quantity || '-'}</td>
+                              <td className="px-3 py-2">{task.unit || '-'}</td>
+                              <td className="px-3 py-2">{task.hours || '-'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-gray-700 mb-2">Equipment & Materials</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-600">Equipment</h4>
+                        <p className="text-sm text-gray-600">
+                          {Array.isArray(selectedEntry.equipment)
+                            ? selectedEntry.equipment.map((equip, i) => (
+                                typeof equip === 'string'
+                                  ? equip
+                                  : `${equip.description}${equip.hours ? ` (${equip.hours} hrs)` : ''}`
+                              )).join(', ')
+                            : selectedEntry.equipment || '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-600">Materials</h4>
+                        <p className="text-sm text-gray-600">
+                          {Array.isArray(selectedEntry.materials)
+                            ? selectedEntry.materials.map((material, i) => (
+                                typeof material === 'string'
+                                  ? material
+                                  : `${material.description}${material.quantity ? ` (${material.quantity} ${material.unit || 'units'})` : ''}`
+                              )).join(', ')
+                            : selectedEntry.materials || '-'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {selectedEntry.imageUrls && selectedEntry.imageUrls.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-gray-700 mb-2">Site Photos</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        {selectedEntry.imageUrls.map((url, index) => (
+                          <img
+                            key={index}
+                            src={url}
+                            alt={`Site photo ${index + 1}`}
+                            className="rounded-lg w-full h-32 sm:h-48 object-cover"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
