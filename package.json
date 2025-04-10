@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.3.0",
+    "@types/react-tabs": "^5.0.4",
     "chart.js": "^4.4.8",
     "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
@@ -28,6 +29,7 @@
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.22.0",
     "react-signature-canvas": "^1.0.6",
+    "react-tabs": "^6.1.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

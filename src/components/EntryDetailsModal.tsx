@@ -2,8 +2,27 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { statusColors } from '../constants/formOptions';
 
+interface Entry {
+  status: 'draft' | 'submitted';
+  createdAt: { seconds: number };
+  title: string;
+  weather: {
+    sky: string;
+    precipitation: string;
+    temperature: string;
+    wind: string;
+  };
+  tasks: Array<{
+    description: string;
+    equipment: string[];
+    quantity: number;
+    unit: string;
+  }>;
+  notes?: string;
+}
+
 interface EntryDetailsModalProps {
-  entry: any;
+  entry: Entry;
   onClose: () => void;
   onExport: (format?: 'pdf' | 'excel' | 'csv' | 'all') => void;
 }

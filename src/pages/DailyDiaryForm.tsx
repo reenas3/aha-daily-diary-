@@ -4,6 +4,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, auth, storage } from '../lib/firebase'
 import SignatureCanvas from 'react-signature-canvas'
 import toast from 'react-hot-toast'
+import { Link } from 'react-router-dom'
 
 // Weather conditions options
 const weatherConditions = [
@@ -190,10 +191,10 @@ const DailyDiaryForm = () => {
               
               {auth.currentUser?.email === 'admin@example.com' && (
                 <nav className="mt-4 flex justify-center space-x-4">
-                  <a href="/admin/dashboard" className="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-                  <a href="/admin/entries" className="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">All Entries</a>
-                  <a href="/admin/analytics" className="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Analytics</a>
-                  <a href="/admin/settings" className="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Settings</a>
+                  <Link to="../admin/dashboard" className="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Dashboard</Link>
+                  <Link to="../admin/entries" className="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">All Entries</Link>
+                  <Link to="../admin/analytics" className="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Analytics</Link>
+                  <Link to="../admin/settings" className="text-white hover:text-blue-200 px-3 py-2 rounded-md text-sm font-medium">Settings</Link>
                 </nav>
               )}
             </div>

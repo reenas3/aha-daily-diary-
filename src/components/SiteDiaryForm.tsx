@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '../context/AuthContext'
-import { saveEntry, getEntries } from '../services/offlineStorage'
+import { useAuth } from '../contexts/AuthContext'
+import { saveEntry, getAllEntries } from '../services/offlineStorage'
 import { weatherOptions, commonTasks, commonEquipment, units, statusColors } from '../constants/formOptions'
 import { generatePDF } from '../utils/pdfGenerator'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
@@ -64,8 +64,8 @@ export const SiteDiaryForm = () => {
   }, [])
 
   const loadEntries = async () => {
-    const submissions = await getEntries('submissions')
-    const drafts = await getEntries('drafts')
+    const submissions = await getAllEntries('submissions')
+    const drafts = await getAllEntries('drafts')
     setEntries([...submissions, ...drafts])
   }
 
