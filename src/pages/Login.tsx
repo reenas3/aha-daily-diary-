@@ -11,13 +11,9 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      const result = await signInWithPopup(auth, googleProvider)
+      await signInWithPopup(auth, googleProvider)
       toast.success('Welcome to Site Diary!')
-      if (result.user.email === 'admin@example.com') {
-        navigate('/admin')
-      } else {
-        navigate('/')
-      }
+      navigate('/')
     } catch (error: any) {
       toast.error('Failed to sign in with Google')
     } finally {

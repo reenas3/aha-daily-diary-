@@ -18,10 +18,8 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
     )
   }
 
-  // Check if user is authenticated and has admin role
-  // For now, we'll use a simple check with a specific admin email
-  // In a production environment, you should implement proper role-based authentication
-  if (!currentUser || currentUser.email !== 'admin@example.com') {
+  // Only check if user is authenticated
+  if (!currentUser) {
     return <Navigate to="/login" />
   }
 

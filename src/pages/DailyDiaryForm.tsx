@@ -141,14 +141,30 @@ const DailyDiaryForm = () => {
         })
       )
 
-      await addDoc(collection(db, 'submissions'), {
+      const timestamp = {
+        seconds: Math.floor(Date.now() / 1000),
+        nanoseconds: 0
+      }
+
+      const entryData = {
         ...formData,
         signature,
         imageUrls,
         userId: auth.currentUser?.uid,
-        createdAt: new Date(),
-        status: 'submitted'
-      })
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        status: 'submitted',
+        weather: {
+          ...formData.weather,
+          sky: formData.weather.conditions // Map conditions to sky for consistency
+        }
+      }
+
+      // Save to both collections for now to ensure data availability
+      await Promise.all([
+        addDoc(collection(db, 'submissions'), entryData),
+        addDoc(collection(db, 'diaryEntries'), entryData)
+      ])
 
       toast.success('Daily diary submitted successfully!')
       // Reset form
@@ -173,6 +189,7 @@ const DailyDiaryForm = () => {
       })
       signatureRef.current?.clear()
     } catch (error) {
+      console.error('Error submitting form:', error)
       toast.error('Error submitting form')
     } finally {
       setLoading(false)

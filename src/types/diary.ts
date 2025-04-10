@@ -4,11 +4,11 @@ export interface DiaryEntry {
   contractId: string
   siteLocation: string
   date: string
+  task?: string
   weather: {
     temperature: string
-    sky: string
-    precipitation: string
-    wind: string
+    conditions: string
+    humidity?: string
   }
   workingHours: {
     startTime: string
@@ -16,22 +16,30 @@ export interface DiaryEntry {
   }
   progress: string
   safety: string
-  materials: string
-  equipment: string
-  labor: string
+  materials?: string | Array<{
+    description: string
+    quantity?: number
+    unit?: string
+  }>
+  equipment?: string | Array<{
+    description: string
+    hours?: number
+  }>
+  labor?: string
   issues: string
   nextSteps: string
   tasks: Array<{
     description: string
-    equipment: string[]
+    equipment?: string[]
     quantity: number
     unit: string
+    hours?: number
   }>
-  notes: string
+  notes?: string
   title: string
-  imageUrls: string[]
+  imageUrls?: string[]
   signature: string
-  status: 'draft' | 'submitted'
+  status?: 'draft' | 'submitted'
   createdAt: {
     seconds: number
     nanoseconds: number
@@ -40,4 +48,5 @@ export interface DiaryEntry {
     seconds: number
     nanoseconds: number
   }
+  createdBy?: string
 } 

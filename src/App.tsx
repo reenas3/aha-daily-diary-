@@ -9,16 +9,16 @@ import Header from './components/Header'
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        
-        {/* Admin Routes */}
-        <Route
-          path="/admin/*"
-          element={
-            <AdminRoute>
-              <>
-                <Header />
+      <Header />
+      <main className="pt-16">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          
+          {/* Admin Routes */}
+          <Route
+            path="/admin/*"
+            element={
+              <AdminRoute>
                 <Routes>
                   <Route path="/" element={<AdminDashboard />} />
                   <Route path="/dashboard" element={<AdminDashboard />} />
@@ -26,24 +26,21 @@ function App() {
                   <Route path="/analytics" element={<AdminDashboard />} />
                   <Route path="/settings" element={<AdminDashboard />} />
                 </Routes>
-              </>
-            </AdminRoute>
-          }
-        />
+              </AdminRoute>
+            }
+          />
 
-        {/* User Routes */}
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <>
-                <Header />
+          {/* User Routes */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
                 <DailyDiaryForm />
-              </>
-            </PrivateRoute>
-          }
-        />
-      </Routes>
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </main>
     </div>
   )
 }
