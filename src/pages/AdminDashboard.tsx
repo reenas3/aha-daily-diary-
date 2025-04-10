@@ -35,8 +35,7 @@ interface DateRange {
 
 const AdminDashboard = () => {
   const [entries, setEntries] = useState<DiaryEntry[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedEntry, setSelectedEntry] = useState<DiaryEntry | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -50,6 +49,7 @@ const AdminDashboard = () => {
 
   const fetchEntries = async () => {
     try {
+      setIsLoading(true)
       const q = query(collection(db, 'submissions'), orderBy('createdAt', 'desc'))
       const querySnapshot = await getDocs(q)
       const fetchedEntries = querySnapshot.docs.map(doc => ({
@@ -57,10 +57,10 @@ const AdminDashboard = () => {
         ...doc.data()
       })) as DiaryEntry[]
       setEntries(fetchedEntries)
-      setLoading(false)
     } catch (error) {
       console.error('Error fetching entries:', error)
-      setLoading(false)
+    } finally {
+      setIsLoading(false)
     }
   }
 

@@ -1,16 +1,18 @@
 export interface DiaryEntry {
-  id: string
+  id?: string
   projectTitle: string
   contractId: string
   siteLocation: string
   date: string
+  weather: {
+    temperature: string
+    sky: string
+    precipitation: string
+    wind: string
+  }
   workingHours: {
     startTime: string
     endTime: string
-  }
-  weather: {
-    temperature: string
-    conditions: string
   }
   progress: string
   safety: string
@@ -19,11 +21,9 @@ export interface DiaryEntry {
   labor: string
   issues: string
   nextSteps: string
-  qualityChecks: string
-  visitors: string
-  subcontractors: string
-  photos: string[]
-  signature: string
-  createdAt: { seconds: number }
-  status: string
+  imageUrls?: string[]
+  signature?: string
+  status?: 'draft' | 'submitted'
+  createdAt?: string
+  updatedAt?: string
 } 

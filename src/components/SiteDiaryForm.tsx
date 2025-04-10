@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, FormEvent } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { saveEntry, getAllEntries } from '../services/offlineStorage'
 import { weatherOptions, commonTasks, commonEquipment, units, statusColors } from '../constants/formOptions'
@@ -10,25 +10,36 @@ import { EntryDetailsModal } from './EntryDetailsModal'
 import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import JSZip from 'jszip'
+import { addDoc, collection } from 'firebase/firestore'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { db, auth, storage } from '../lib/firebase'
+import SignatureCanvas from 'react-signature-canvas'
+import { Link } from 'react-router-dom'
+import { DiaryEntry } from '../types/diary'
 
-interface Entry {
-  id: string
-  title: string
+interface Entry extends DiaryEntry {
+  title?: string;
+  tasks?: string[];
+  notes?: string;
+}
+
+interface FormData {
+  projectTitle: string;
+  contractId: string;
+  siteLocation: string;
+  date: string;
   weather: {
-    sky: string
-    precipitation: string
-    temperature: string
-    wind: string
-  }
-  tasks: Array<{
-    description: string
-    equipment: string[]
-    quantity: number
-    unit: string
-  }>
-  notes: string
-  createdAt: any
-  status: 'draft' | 'submitted'
+    temperature: string;
+    sky: string;
+    precipitation: string;
+    wind: string;
+  };
+  workingHours: {
+    startTime: string;
+    endTime: string;
+  };
+  images: File[];
+  signature: string;
 }
 
 export const SiteDiaryForm = () => {
@@ -37,65 +48,98 @@ export const SiteDiaryForm = () => {
   const [entries, setEntries] = useState<Entry[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [dateFilter, setDateFilter] = useState('')
-  const [formData, setFormData] = useState<Entry>({
-    id: '',
-    title: '',
+  const [formData, setFormData] = useState<FormData>({
+    projectTitle: '',
+    contractId: '',
+    siteLocation: '',
+    date: '',
     weather: {
+      temperature: '',
       sky: '',
       precipitation: '',
-      temperature: '',
       wind: ''
     },
-    tasks: [{
-      description: '',
-      equipment: [],
-      quantity: 0,
-      unit: ''
-    }],
-    notes: '',
-    createdAt: new Date(),
-    status: 'draft'
+    workingHours: {
+      startTime: '',
+      endTime: ''
+    },
+    images: [],
+    signature: ''
   })
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null)
   const [selectedEntries, setSelectedEntries] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
+  const signatureRef = useRef<SignatureCanvas | null>(null)
 
   useEffect(() => {
     loadEntries()
   }, [])
 
   const loadEntries = async () => {
-    const submissions = await getAllEntries('submissions')
-    const drafts = await getAllEntries('drafts')
-    setEntries([...submissions, ...drafts])
+    try {
+      const allEntries = await getAllEntries()
+      setEntries(allEntries as Entry[])
+    } catch (error) {
+      console.error('Error loading entries:', error)
+    }
   }
 
-  const handleSubmit = async (status: 'draft' | 'submitted') => {
+  const handleSubmit = async (e: FormEvent | 'draft' | 'submitted') => {
+    if (e instanceof Event) e.preventDefault()
+    setLoading(true)
+
     try {
-      const data = {
-        ...formData,
-        status,
-        createdAt: new Date()
-      }
-      
-      await saveEntry(data, status === 'draft' ? 'drafts' : 'submissions')
-      toast.success(`Entry ${status === 'draft' ? 'saved as draft' : 'submitted'} successfully`)
-      loadEntries()
-      
-      if (status === 'submitted') {
-        setFormData({
-          id: '',
-          title: '',
-          weather: { sky: '', precipitation: '', temperature: '', wind: '' },
-          tasks: [{ description: '', equipment: [], quantity: 0, unit: '' }],
-          notes: '',
-          createdAt: new Date(),
-          status: 'draft'
+      const imageUrls = await Promise.all(
+        formData.images.map(async (image: File) => {
+          const storageRef = ref(storage, `images/${image.name}`)
+          const snapshot = await uploadBytes(storageRef, image)
+          return getDownloadURL(snapshot.ref)
         })
+      )
+
+      const signature = signatureRef.current?.toDataURL() || ''
+
+      const entryData: DiaryEntry = {
+        ...formData,
+        signature,
+        imageUrls,
+        userId: auth.currentUser?.uid || '',
+        createdAt: new Date().toISOString(),
+        status: typeof e === 'string' ? e : 'draft'
       }
+
+      await saveEntry(entryData)
+      toast.success('Entry saved successfully!')
+      resetForm()
+      loadEntries()
     } catch (error) {
-      toast.error('Error saving entry')
-      console.error('Error:', error)
+      console.error('Error submitting form:', error)
+      toast.error('Failed to save entry')
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const resetForm = () => {
+    setFormData({
+      projectTitle: '',
+      contractId: '',
+      siteLocation: '',
+      date: '',
+      weather: {
+        temperature: '',
+        sky: '',
+        precipitation: '',
+        wind: ''
+      },
+      workingHours: {
+        startTime: '',
+        endTime: ''
+      },
+      images: [],
+      signature: ''
+    })
+    signatureRef.current?.clear()
   }
 
   const addTask = () => {

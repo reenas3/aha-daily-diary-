@@ -1,4 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import { DiaryEntry } from '../types/diary'
 
 const DB_NAME = 'daily-diary-db';
 const STORE_NAME = 'entries';
@@ -44,21 +45,40 @@ export const initDB = async () => {
   return db;
 };
 
-export const saveEntry = async (entry: Entry): Promise<void> => {
-  const database = await initDB();
-  entry.lastModified = Date.now();
-  await database.put(STORE_NAME, entry);
-};
+export const saveEntry = async (entry: DiaryEntry, collection: 'drafts' | 'submissions') => {
+  try {
+    // For now, we'll just store in localStorage
+    const key = `${collection}_${entry.id}`
+    localStorage.setItem(key, JSON.stringify(entry))
+    return entry
+  } catch (error) {
+    console.error('Error saving entry:', error)
+    throw error
+  }
+}
 
 export const getEntry = async (id: string): Promise<Entry | undefined> => {
   const database = await initDB();
   return database.get(STORE_NAME, id);
 };
 
-export const getAllEntries = async (): Promise<Entry[]> => {
-  const database = await initDB();
-  return database.getAll(STORE_NAME);
-};
+export const getAllEntries = async () => {
+  try {
+    const entries: DiaryEntry[] = []
+    // Get all entries from localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key?.startsWith('drafts_') || key?.startsWith('submissions_')) {
+        const entry = JSON.parse(localStorage.getItem(key) || '{}')
+        entries.push(entry)
+      }
+    }
+    return entries
+  } catch (error) {
+    console.error('Error getting entries:', error)
+    return []
+  }
+}
 
 export const getEntriesByStatus = async (status: 'draft' | 'submitted'): Promise<Entry[]> => {
   const database = await initDB();
